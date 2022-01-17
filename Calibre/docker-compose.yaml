@@ -1,0 +1,14 @@
+---
+version: "3"
+
+services:
+    calibre:
+        image: wietsedv/calibre-server
+        volumes:
+            - /Hidden/calibre:/library
+        ports:
+            - "8080:8080"
+        environment:
+            - AJAX-TIMEOUT 900
+            - TIMEOUT 900
+            - MAX-JOB-TIME 0
