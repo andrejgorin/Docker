@@ -3,6 +3,7 @@ version: "3"
 
 services:
     calibre:
+        container_name: calibre
         image: wietsedv/calibre-server
         volumes:
             - /Hidden/calibre:/library
