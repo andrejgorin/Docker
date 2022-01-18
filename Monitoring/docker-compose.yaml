@@ -1,4 +1,4 @@
----
+
 version: '3'
 services:
   eclipse-mosquitto:
@@ -6,23 +6,32 @@ services:
     container_name: mosquitto
     restart: always
     volumes:
-      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-      - ./passwd:/mosquitto/config/passwd:ro
-      - mosquitto_data:/mosquitto/data
-      - mosquitto_log:/mosquitto/log
+    - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    - ./passwd:/mosquitto/config/passwd:ro
+    - mosquitto_data:/mosquitto/data
+    - mosquitto_log:/mosquitto/log
     depends_on:
       - influxdb
     links:
       - influxdb
     ports:
-      - '1883:1883'
+    - '1883:1883'
   telegraf:
     image: telegraf
     container_name: telegraf
     restart: always
+    user: telegraf:997
+    environment:
+    - HOST_ETC=/hostfs/etc
+    - HOST_PROC=/hostfs/proc
+    - HOST_SYS=/hostfs/sys
+    - HOST_VAR=/hostfs/var
+    - HOST_RUN=/hostfs/run
+    - HOST_MOUNT_PREFIX=/hostfs
     volumes:
-      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
-      - /var/run/docker.sock:/var/run/docker.sock
+    - /:/hostfs:ro
+    - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - influxdb
       - mosquitto
@@ -30,7 +39,7 @@ services:
       - influxdb
       - mosquitto
     ports:
-      - '8125:8125'
+    - '8125:8125'
 
   influxdb:
     image: influxdb
@@ -47,7 +56,7 @@ services:
       - '8086:8086'
     volumes:
       - influxdb_data:/var/lib/influxdb2
-
+ 
   grafana:
     image: grafana/grafana
     container_name: grafana
@@ -63,9 +72,10 @@ services:
       - '3000:3000'
     volumes:
       - grafana_data:/var/lib/grafana
-
+        
 volumes:
   grafana_data: {}
   influxdb_data: {}
   mosquitto_data: {}
   mosquitto_log: {}
+

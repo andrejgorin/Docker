@@ -113,7 +113,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r._measurement == \"docker\")\n  |> filter(fn: (r) => r._field =~ /n_containers_running*/)\n  |> last()\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"docker\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r._measurement == \"docker\")\n  |> filter(fn: (r) => r._field =~ /n_containers_running*/)\n  |> last()\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
@@ -182,7 +182,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"telegraf\")\n  |> range(start: -1m)\n  |> filter(fn: (r) => r._measurement == \"docker_container_status\")\n  |> filter(fn: (r) => r._field == \"uptime_ns\")\n  |> aggregateWindow(every: 20s, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"docker\")\n  |> range(start: -1m)\n  |> filter(fn: (r) => r._measurement == \"docker_container_status\")\n  |> filter(fn: (r) => r._field == \"uptime_ns\")\n  |> last()\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
@@ -268,7 +268,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r._measurement == \"docker\")\n  |> filter(fn: (r) => r._field =~ /n_containers.*/)\n  |> aggregateWindow(every: 20s, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"docker\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r._measurement == \"docker\")\n  |> filter(fn: (r) => r._field =~ /n_containers.*/)\n  |> aggregateWindow(every: 60s, fn: mean)\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
@@ -355,7 +355,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r._measurement == \"docker_container_mem\")\n  |> filter(fn: (r) => r._field == \"max_usage\")\n  |> aggregateWindow(every: 20s, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"docker\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r._measurement == \"docker_container_mem\")\n  |> filter(fn: (r) => r._field == \"max_usage\")\n  |> aggregateWindow(every: 60s, fn: mean)\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
@@ -442,7 +442,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r._measurement == \"docker_container_cpu\")\n  |> filter(fn: (r) => r._field == \"usage_percent\")\n  |> aggregateWindow(every: 20s, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"docker\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r._measurement == \"docker_container_cpu\")\n  |> filter(fn: (r) => r._field == \"usage_percent\")\n  |> aggregateWindow(every: 60s, fn: mean)\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
@@ -529,7 +529,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"telegraf\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r._measurement == \"docker_container_net\")\n  |> filter(fn: (r) => r._field =~ /rx_bytes/)\n  |> aggregateWindow(every: 20s, fn: mean)\n  |> derivative(unit: 1s)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"docker\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r._measurement == \"docker_container_net\")\n  |> filter(fn: (r) => r._field =~ /rx_bytes/)\n  |> aggregateWindow(every: 60s, fn: mean)\n  |> derivative(unit: 1s)\n  |> yield(name: \"_field\")",
           "refId": "A"
         },
         {
@@ -546,7 +546,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "10s",
+  "refresh": "30s",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],
@@ -561,6 +561,6 @@
   "timezone": "",
   "title": "Docker Monitoring",
   "uid": "0saWXBJnk",
-  "version": 54,
+  "version": 60,
   "weekStart": ""
 }
