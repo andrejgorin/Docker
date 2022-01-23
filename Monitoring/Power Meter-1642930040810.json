@@ -12,6 +12,12 @@
   "__elements": [],
   "__requires": [
     {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
@@ -22,12 +28,6 @@
       "id": "influxdb",
       "name": "InfluxDB",
       "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
     },
     {
       "type": "panel",
@@ -63,60 +63,17 @@
   "liveNow": false,
   "panels": [
     {
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
+      "collapsed": false,
       "gridPos": {
-        "h": 7,
-        "w": 6,
+        "h": 1,
+        "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 9,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.3.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "query": "from(bucket: \"system\")\n  |> range(start: -2m)\n  |> filter(fn: (r) => r._measurement == \"system\")\n  |> filter(fn: (r) => r._field == \"uptime\")\n  |> last()\n  |> yield(name: \"_field\")",
-          "refId": "A"
-        }
-      ],
-      "title": "System uptime",
-      "transparent": true,
-      "type": "stat"
+      "id": 18,
+      "panels": [],
+      "title": "Phase 2",
+      "type": "row"
     },
     {
       "fieldConfig": {
@@ -125,6 +82,8 @@
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 300,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -134,21 +93,18 @@
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "volt"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 6,
-        "y": 0
+        "w": 4,
+        "x": 0,
+        "y": 1
       },
-      "id": 11,
+      "id": 9,
       "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "center",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -157,7 +113,8 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
       },
       "pluginVersion": "8.3.4",
       "targets": [
@@ -166,13 +123,13 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: -2m)\n  |> filter(fn: (r) => r._measurement == \"mem\")\n  |> filter(fn: (r) => r._field == \"total\")\n  |> last()\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: -1m)\n  |> filter(fn: (r) => r._field == \"voltage\")\n  |> filter(fn: (r) => r.phase == \"2\")\n  |> last()\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
-      "title": "Total memory",
+      "title": "Voltage",
       "transparent": true,
-      "type": "stat"
+      "type": "gauge"
     },
     {
       "fieldConfig": {
@@ -181,6 +138,232 @@
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "amp"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 10,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: -1m)\n  |> filter(fn: (r) => r._field == \"current\")\n  |> filter(fn: (r) => r.phase == \"2\")\n  |> last()\n  |> yield(name: \"_field\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Current",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 20000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 11,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: -1m)\n  |> filter(fn: (r) => r._field == \"power\")\n  |> filter(fn: (r) => r.phase == \"2\")\n  |> last()\n  |> yield(name: \"_field\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Power",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 9999,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "kwatth"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 12,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: -1m)\n  |> filter(fn: (r) => r._field == \"energy\")\n  |> filter(fn: (r) => r.phase == \"2\")\n  |> last()\n  |> yield(name: \"_field\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Energy",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 60,
+          "min": 40,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "rothz"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 13,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: -1m)\n  |> filter(fn: (r) => r._field == \"frequency\")\n  |> filter(fn: (r) => r.phase == \"2\")\n  |> last()\n  |> yield(name: \"_field\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Frequency",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 1,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -196,15 +379,12 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 12,
-        "y": 0
+        "w": 4,
+        "x": 20,
+        "y": 1
       },
-      "id": 10,
+      "id": 14,
       "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "center",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -213,7 +393,8 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
       },
       "pluginVersion": "8.3.4",
       "targets": [
@@ -222,69 +403,26 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: -2m)\n  |> filter(fn: (r) => r._measurement == \"system\")\n  |> filter(fn: (r) => r._field == \"n_cpus\")\n  |> last()\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: -1m)\n  |> filter(fn: (r) => r._field == \"pf\")\n  |> filter(fn: (r) => r.phase == \"2\")\n  |> last()\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
-      "title": "nCPU",
+      "title": "Power Factor",
       "transparent": true,
-      "type": "stat"
+      "type": "gauge"
     },
     {
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
+      "collapsed": false,
       "gridPos": {
-        "h": 7,
-        "w": 6,
-        "x": 18,
-        "y": 0
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 8
       },
-      "id": 12,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.3.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "query": "from(bucket: \"system\")\n  |> range(start: -2m)\n  |> filter(fn: (r) => r._measurement == \"system\")\n  |> filter(fn: (r) => r._field == \"load1\")\n  |> last()\n  |> yield(name: \"_field\")",
-          "refId": "A"
-        }
-      ],
-      "title": "System load",
-      "transparent": true,
-      "type": "stat"
+      "id": 16,
+      "panels": [],
+      "title": "Historical Data",
+      "type": "row"
     },
     {
       "fieldConfig": {
@@ -304,7 +442,10 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepAfter",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
@@ -320,7 +461,7 @@
               "mode": "off"
             }
           },
-          "displayName": "${__series.name} - ${__field.name} [${__field.labels[\"cpu\"]}]",
+          "displayName": "${__series.name} - ${__field.name} [${__field.labels.did}]",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -328,22 +469,18 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "percent"
+          "unit": "volt"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 7,
         "w": 12,
         "x": 0,
-        "y": 7
+        "y": 9
       },
       "id": 2,
       "options": {
@@ -366,11 +503,11 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"cpu\" and r.cpu =~ /cpu\\d/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._field == \"voltage\")\n  |> drop(columns: [\"host\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
-      "title": "Cpu",
+      "title": "Voltage",
       "transparent": true,
       "type": "timeseries"
     },
@@ -392,7 +529,7 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepAfter",
             "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
@@ -408,7 +545,7 @@
               "mode": "off"
             }
           },
-          "displayName": "${__series.name} - ${__field.name} [${__field.labels[\"device\"]}, ${__field.labels[\"fstype\"]}]",
+          "displayName": "${__series.name} - ${__field.name} [${__field.labels.did}]",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -416,22 +553,18 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "amp"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 7,
         "w": 12,
         "x": 12,
-        "y": 7
+        "y": 9
       },
       "id": 3,
       "options": {
@@ -454,11 +587,11 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"disk\")\n  |> filter(fn: (r) => r._field == \"free\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._field == \"current\")\n  |> drop(columns: [\"host\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
-      "title": "Disk usage",
+      "title": "Current",
       "transparent": true,
       "type": "timeseries"
     },
@@ -480,7 +613,7 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepAfter",
             "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
@@ -496,7 +629,7 @@
               "mode": "off"
             }
           },
-          "displayName": "${__series.name} - ${__field.name}",
+          "displayName": "${__series.name} - ${__field.name} [${__field.labels.did}]",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -504,41 +637,12 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "watt"
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "swap - used"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
@@ -546,7 +650,7 @@
         "x": 0,
         "y": 16
       },
-      "id": 8,
+      "id": 4,
       "options": {
         "legend": {
           "calcs": [
@@ -567,11 +671,11 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"swap\")\n  |> filter(fn: (r) => r._field == \"used\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._field == \"power\")\n  |> drop(columns: [\"host\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
-      "title": "Swap",
+      "title": "Power",
       "transparent": true,
       "type": "timeseries"
     },
@@ -593,7 +697,7 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepAfter",
             "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
@@ -609,7 +713,7 @@
               "mode": "off"
             }
           },
-          "displayName": "${__series.name} - ${__field.name}",
+          "displayName": "${__series.name} - ${__field.name} [${__field.labels.did}]",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -617,41 +721,12 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "kwatth"
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "mem - used"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
@@ -680,11 +755,178 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mem\")\n  |> filter(fn: (r) => r._field == \"used\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._field == \"energy\")\n  |> drop(columns: [\"host\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
-      "title": "Memory",
+      "title": "Energy",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": 120000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__series.name} - ${__field.name} [${__field.labels.did}]",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "rothz"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._field == \"frequency\")\n  |> drop(columns: [\"host\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Frequency",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": 120000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__series.name} - ${__field.name} [${__field.labels.did}]",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 25
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "from(bucket: \"mqtt\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._field == \"pf\")\n  |> drop(columns: [\"host\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Power Factor",
       "transparent": true,
       "type": "timeseries"
     }
@@ -697,13 +939,13 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Host System",
-  "uid": "d8Hv3UJnk",
-  "version": 22,
-  "weekStart": ""
+  "title": "Power Meter",
+  "uid": "pRm4r-1nk",
+  "version": 46,
+  "weekStart": "monday"
 }

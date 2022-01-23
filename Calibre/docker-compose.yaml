@@ -5,6 +5,7 @@ services:
     calibre:
         container_name: calibre
         image: wietsedv/calibre-server
+        restart: unless-stopped
         volumes:
             - /Hidden/calibre:/library
         ports: 
