@@ -17,7 +17,7 @@ services:
       - 32414:32414/udp
     environment:
       - TZ=Europe/Riga
-      - PLEX_CLAIM=claim-claim
+      - PLEX_CLAIM=claim
       - ADVERTISE_IP=http://192.168.1.3:32400/
     hostname: PlexServer
     volumes:

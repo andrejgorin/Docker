@@ -84,7 +84,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
+        "w": 4,
         "x": 0,
         "y": 0
       },
@@ -140,11 +140,11 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 6,
+        "w": 4,
+        "x": 4,
         "y": 0
       },
-      "id": 11,
+      "id": 13,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -166,7 +166,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: -2m)\n  |> filter(fn: (r) => r._measurement == \"mem\")\n  |> filter(fn: (r) => r._field == \"total\")\n  |> last()\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"system\")  \n  |> range(start: -2m)\n  |> filter(fn: (r) => r._measurement == \"mem\")\n  |> filter(fn: (r) => r._field == \"total\")\n  |> last()\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
@@ -196,8 +196,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 12,
+        "w": 4,
+        "x": 8,
         "y": 0
       },
       "id": 10,
@@ -252,8 +252,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 18,
+        "w": 4,
+        "x": 12,
         "y": 0
       },
       "id": 12,
@@ -283,6 +283,118 @@
         }
       ],
       "title": "System load",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "from(bucket: \"system\")\n  |> range(start: -2m)\n  |> filter(fn: (r) => r._measurement == \"cpu_temperature\")\n  |> map(fn: (r) => ({r with _value: r._value / 1000}))\n  |> last()\n  |> yield(name: \"_field\")",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU temperature",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "rothz"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "id": 14,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.3.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "from(bucket: \"system\")\n  |> range(start: -2m)\n  |> filter(fn: (r) => r._measurement == \"cpu_frequency\")\n  |> map(fn: (r) => ({r with _value: r._value * 1000}))\n  |> last()\n  |> yield(name: \"_field\")",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU frequency",
       "transparent": true,
       "type": "stat"
     },
@@ -704,6 +816,6 @@
   "timezone": "",
   "title": "Host System",
   "uid": "d8Hv3UJnk",
-  "version": 22,
+  "version": 27,
   "weekStart": ""
 }

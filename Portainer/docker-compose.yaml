@@ -1,0 +1,16 @@
+---
+version: '3'
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    restart: unless-stopped
+    command: --admin-password 'portaineradmin'
+    ports:
+      - 9000:9000/tcp
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  portainer_data: {}

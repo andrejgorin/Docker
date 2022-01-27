@@ -1,0 +1,15 @@
+---
+version: '3'
+services:
+  samba:
+    container_name: samba
+    image: dperson/samba
+    restart: unless-stopped
+    ports:
+      - 137:137/udp
+      - 138:138/udp
+      - 139:139/tcp
+      - 445:445/tcp
+    volumes:
+      - /media/storage/Public:/mount
+    command: '-s "Mount;/mount;yes;no;no;admin" -u "admin;sambaadmin" -p'
