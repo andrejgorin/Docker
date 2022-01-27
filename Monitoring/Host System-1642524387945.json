@@ -84,7 +84,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
+        "w": 5,
         "x": 0,
         "y": 0
       },
@@ -140,8 +140,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
-        "x": 4,
+        "w": 5,
+        "x": 5,
         "y": 0
       },
       "id": 13,
@@ -196,8 +196,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
-        "x": 8,
+        "w": 5,
+        "x": 10,
         "y": 0
       },
       "id": 10,
@@ -246,70 +246,14 @@
               }
             ]
           },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 12,
-        "y": 0
-      },
-      "id": 12,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.3.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "query": "from(bucket: \"system\")\n  |> range(start: -2m)\n  |> filter(fn: (r) => r._measurement == \"system\")\n  |> filter(fn: (r) => r._field == \"load1\")\n  |> last()\n  |> yield(name: \"_field\")",
-          "refId": "A"
-        }
-      ],
-      "title": "System load",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
           "unit": "celsius"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
-        "x": 16,
+        "w": 5,
+        "x": 15,
         "y": 0
       },
       "id": 11,
@@ -432,7 +376,7 @@
               "mode": "off"
             }
           },
-          "displayName": "${__series.name} - ${__field.name} [${__field.labels[\"cpu\"]}]",
+          "displayName": "${__series.name} - usage [${__field.labels[\"cpu\"]}]",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -478,7 +422,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"cpu\" and r.cpu =~ /cpu\\d/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"cpu\" and r.cpu =~ /cpu\\d/)\n  |> filter(fn: (r) => r._field == \"usage_idle\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> map(fn: (r) => ({r with _value: 100.0 - r._value}))\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
@@ -566,7 +510,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"disk\")\n  |> filter(fn: (r) => r._field == \"free\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"disk\")\n  |> filter(fn: (r) => r._field =~ /^used$|^total$|^free$/)\n  |> filter(fn: (r) => r.fstype == \"ext4\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
@@ -616,41 +560,12 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "short"
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "swap - used"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
@@ -679,11 +594,29 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"swap\")\n  |> filter(fn: (r) => r._field == \"used\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"system\")\n  |> filter(fn: (r) => r._field == \"load1\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")\n",
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "hide": false,
+          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"system\")\n  |> filter(fn: (r) => r._field == \"load5\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "hide": false,
+          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"system\")\n  |> filter(fn: (r) => r._field == \"load15\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "refId": "C"
         }
       ],
-      "title": "Swap",
+      "title": "System load",
       "transparent": true,
       "type": "timeseries"
     },
@@ -729,41 +662,12 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
           "unit": "decbytes"
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "mem - used"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
@@ -792,7 +696,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mem\")\n  |> filter(fn: (r) => r._field == \"used\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
+          "query": "from(bucket: \"system\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"mem\")\n  |> filter(fn: (r) => r._field =~ /^used$|^total$|^free$/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\n  |> yield(name: \"_field\")",
           "refId": "A"
         }
       ],
@@ -816,6 +720,6 @@
   "timezone": "",
   "title": "Host System",
   "uid": "d8Hv3UJnk",
-  "version": 27,
+  "version": 33,
   "weekStart": ""
 }

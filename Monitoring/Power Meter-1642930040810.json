@@ -952,7 +952,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "30s",
+  "refresh": "5s",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [],

@@ -12,4 +12,16 @@ services:
       - 445:445/tcp
     volumes:
       - /media/storage/Public:/mount
+      - samba_data:/run/samba
+      - samba_data2:/var/lib/samba
+      - samba_data3:/etc
+      - samba_logs:/var/log/samba
+      - samba_cache:/var/cache/samba
+
     command: '-s "Mount;/mount;yes;no;no;admin" -u "admin;sambaadmin" -p'
+volumes:
+  samba_data: {}
+  samba_data2: {}
+  samba_data3: {}
+  samba_logs: {}
+  samba_cache: {}

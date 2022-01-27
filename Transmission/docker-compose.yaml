@@ -8,7 +8,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Riga
-      - TRANSMISSION_WEB_HOME=/combustion-release/ #optional
+      - TRANSMISSION_WEB_HOME=/combustion-release/
       - USER=admin
       - PASS=transmissionadmin
     volumes:
