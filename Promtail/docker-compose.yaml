@@ -1,0 +1,15 @@
+---
+version: '3'
+services:
+  promtail:
+    container_name: promtail
+    image: grafana/promtail
+    restart: unless-stopped
+    volumes:
+      - ./:/etc/promtail
+      - /var/log:/var/log
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://192.168.1.3:514"
+        tag: promtail

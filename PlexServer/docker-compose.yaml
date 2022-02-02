@@ -1,8 +1,8 @@
 ---
 version: '3'
 services:
-  plexserver:
-    container_name: plexserver
+  plex:
+    container_name: plex
     image: plexinc/pms-docker
     restart: unless-stopped
     ports:
@@ -24,8 +24,12 @@ services:
       - plex_config:/config
       - plex_transcode:/transcode
       - /media/storage/Public:/data
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://192.168.1.3:514"
+        tag: plex
 
 volumes:
   plex_transcode: {}
   plex_config: {}
-

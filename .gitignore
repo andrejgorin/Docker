@@ -1,2 +1,6 @@
 passwd
-Wireguard/config
+Wireguard/config/
+mysecrets.py
+.vscode
+__pycache__
+venv

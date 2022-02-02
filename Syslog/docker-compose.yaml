@@ -1,0 +1,12 @@
+---
+version: '3'
+services:
+  syslog:
+    container_name: syslog
+    image: balabit/syslog-ng
+    restart: unless-stopped
+    ports:
+      - 601:601/tcp
+      - 514:514/udp
+    volumes:
+      - /var/log:/var/log
