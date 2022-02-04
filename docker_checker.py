@@ -10,12 +10,12 @@ import telebot
 
 from mysecrets import CHANNEL_ID, TOKEN
 
-logger = logging.getLogger() # TODO
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler(sys.stdout)
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter(
-    "%(asctime)s - docker_checker - %(levelname)s - %(message)s"
+    "%(asctime)s - %(root)s - %(levelname)s - %(message)s"
 )
 handler.setFormatter(formatter)
 logger.addHandler(handler)
