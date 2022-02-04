@@ -10,7 +10,7 @@ import telebot
 
 from mysecrets import CHANNEL_ID, TOKEN
 
-logger = logging.getLogger()
+logger = logging.getLogger() # TODO
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler(sys.stdout)
 handler.setLevel(logging.INFO)
