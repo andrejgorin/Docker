@@ -23,7 +23,7 @@ services:
         syslog-address: "udp://192.168.1.3:514"
         tag: samba
 
-    command: '-s "Mount;/mount;yes;no;no;admin" -u "admin;sambaadmin" -p'
+    command: '-s "Mount;/mount;yes;no;no;admin" -u "admin;pass" -p'
 volumes:
   samba_data: {}
   samba_data2: {}

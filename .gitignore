@@ -1,6 +1,9 @@
 passwd
-Wireguard/config/
+./Wireguard/config/
 mysecrets.py
 .vscode
 __pycache__
+log
+docker-compose.override.yaml
 venv
+config

@@ -2,25 +2,9 @@
 """
 Simple script to check availability of new docker images from hub.docker.com
 """
-import logging
-import sys
-
 import docker
-import telebot
 
-from mysecrets import CHANNEL_ID, TOKEN
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
-formatter = logging.Formatter(
-    "%(asctime)s - docker_checker - %(levelname)s - %(message)s"
-)
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
-bot = telebot.TeleBot(TOKEN, parse_mode=None)
+from helpers import mylogger
 
 client = docker.from_env()
 
@@ -57,19 +41,11 @@ def check_updated():
         if name in myimages:
             message += name
             message += "\n"
-            logger.info("New image version pulled for %s", name)
+            mylogger.info("New image version pulled for %s", name)
         myimages.append(name)
-    if message:
-        bot.send_message(CHANNEL_ID, message)
-
-
-def run():
-    """
-    Just run script
-    """
-    pull_images()
-    check_updated()
-
-
-if __name__ == "__main__":
-    run()
+    if not message:
+        message = "No updates found."
+        mylogger.info(message)
+    else:
+        message = "Following Docker images have updates:\n" + message
+    return message

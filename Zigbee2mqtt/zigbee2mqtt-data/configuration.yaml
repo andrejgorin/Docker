@@ -1,0 +1,10 @@
+permit_join: true
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://192.168.1.3:1883
+  user:
+  password:
+frontend:
+  port: 8080
+advanced:
+  network_key: GENERATE

@@ -1,0 +1,28 @@
+---
+version: "3"
+services:
+  zoneminder:
+    image: gkirsteins/zoneminder.storage
+    container_name: zoneminder
+    ports:
+      - 1080:80
+      - 6802:6802
+    restart: always
+    shm_size: 4096m
+    environment:
+      - TZ=Europe/Riga
+    volumes:
+      - zoneminder_cache:/var/cache/zoneminder
+      - zoneminder_etc:/etc/zm
+      - zoneminder_config:/config
+      - zoneminder_log:/var/log/zm
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://192.168.1.3:514"
+        tag: zoneminder
+volumes:
+  zoneminder_cache: {}
+  zoneminder_etc: {}
+  zoneminder_config: {}
+  zoneminder_log: {}
