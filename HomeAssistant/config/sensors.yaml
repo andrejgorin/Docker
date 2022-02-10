@@ -1,0 +1,72 @@
+# Power Meter
+- platform: mqtt
+  name: "Current"
+  state_topic: "esp32/pub"
+  unit_of_measurement: "A"
+  value_template: "{{ value_json.current | round(1) }}"
+  unique_id: "mains_current_phase2"
+  expire_after: 120
+  device_class: current
+- platform: mqtt
+  name: "Energy"
+  state_topic: "esp32/pub"
+  unit_of_measurement: "kWh"
+  device_class: energy
+  state_class: total_increasing
+  value_template: "{{ value_json.energy | round(1) }}"
+  unique_id: "mains_consumed_energy_phase2"
+  #last_reset_topic: "esp32/pub"
+  #last_reset_value_template: "2022-02-01T00:00:00+00:00"
+  expire_after: 120
+- platform: mqtt
+  name: "Voltage"
+  state_topic: "esp32/pub"
+  unit_of_measurement: "V"
+  value_template: "{{ value_json.voltage | round(0) }}"
+  unique_id: "mains_voltage_phase2"
+  expire_after: 120
+  device_class: voltage
+- platform: mqtt
+  name: "Power"
+  state_topic: "esp32/pub"
+  unit_of_measurement: "W"
+  value_template: "{{ value_json.power | round(0) }}"
+  unique_id: "mains_power_phase2"
+  expire_after: 120
+  device_class: power
+# Time and Date
+- platform: time_date
+  display_options:
+    - "time"
+    - "date"
+    - "date_time"
+    - "date_time_utc"
+    - "date_time_iso"
+    - "time_date"
+    - "time_utc"
+    - "beat"
+- platform: rest
+  name: Thingspeak Weather Clock
+  json_attributes:
+    - field5
+    - field7
+    - field8
+  resource: !secret thingspeak_api
+  value_template: '{{ value_json.created_at }}'
+- platform: template
+  sensors:
+    home_temperature:
+      device_class: temperature
+      friendly_name: 'Temperature in bedroom'
+      value_template: '{{ state_attr("sensor.thingspeak_weather_clock", "field5") | round(0)}}'
+      unit_of_measurement: '°C'
+    home_humidity:
+      device_class: humidity
+      friendly_name: 'Humidity in bedroom'
+      value_template: '{{ state_attr("sensor.thingspeak_weather_clock", "field7") | round(0)}}'
+      unit_of_measurement: '%'
+    home_co2:
+      device_class: carbon_dioxide
+      friendly_name: 'CO2 in bedroom'
+      value_template: '{{ state_attr("sensor.thingspeak_weather_clock", "field8") | round(0)}}'
+      unit_of_measurement: 'ppm'

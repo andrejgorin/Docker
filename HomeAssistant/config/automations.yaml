@@ -1,0 +1,143 @@
+- id: "1644224815901"
+  alias: Nadja out of home
+  description: ""
+  use_blueprint:
+    path: homeassistant/notify_leaving_zone.yaml
+    input:
+      person_entity: person.nadezhdaa
+      zone_entity: zone.home
+      notify_device: 6c27958f294890c8f3d308947659d4dd
+- id: "1644250499241"
+  alias: Telegram ping pong
+  description: ""
+  trigger:
+    - platform: event
+      event_type: telegram_command
+      event_data:
+        command: /ping
+  condition: []
+  action:
+    - service: notify.andrejs
+      data:
+        message: pong
+  mode: single
+- id: "1644252614628"
+  alias: Sunset
+  description: ""
+  trigger:
+    - platform: sun
+      event: sunset
+      offset: "0"
+  condition: []
+  action:
+    - service: notify.andrejs
+      data:
+        message: Sunset
+  mode: single
+- id: "1644252854728"
+  alias: "Sunrise "
+  description: ""
+  trigger:
+    - platform: sun
+      event: sunrise
+      offset: "0"
+  condition: []
+  action:
+    - service: notify.andrejs
+      data:
+        message: Sun up
+  mode: single
+- id: "1644341240745"
+  alias: Chromecast pause
+  description: ""
+  trigger:
+    - platform: state
+      entity_id: input_boolean.toggle
+  condition: []
+  action:
+    - service: media_player.media_play_pause
+      data: {}
+      target:
+        device_id: 85de4978f1dd19bfc42504ccd4d192e9
+  mode: single
+- id: "1644341842469"
+  alias: "Telegram Chromecast "
+  description: ""
+  trigger:
+    - platform: event
+      event_type: telegram_command
+      event_data:
+        command: /play
+  condition: []
+  action:
+    - service: media_player.media_play_pause
+      data: {}
+      target:
+        entity_id: media_player.bedroom_tv
+  mode: single
+- id: "1644412840388"
+  alias: New version of HA available
+  description: ""
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.updater
+  condition:
+    - condition: state
+      entity_id: binary_sensor.updater
+      state: "on"
+  action:
+    - service: notify.andrejs
+      data:
+        message:
+          New version {{ state_attr('binary_sensor.updater', 'newest_version')
+          }} of HA available
+        title: Version checker
+  mode: single
+- id: "1644474844669"
+  alias: Power meter unavailable
+  description: ""
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.current
+  condition:
+    - condition: state
+      entity_id:
+        - sensor.current
+      state: unavailable
+  action:
+    - service: notify.andrejs
+      data:
+        message: Power meter unavailable
+        title: Warning!
+  mode: single
+
+- id: notify_on_device_offline
+  alias: "Device is offline, message to Telegram."
+  mode: parallel
+  trigger:
+    - platform: state
+      entity_id:
+        - device_tracker.lumi_gateway_v3_miio83783985
+        - device_tracker.esp_4cb1b2
+        - device_tracker.esp_940fb1
+        - device_tracker.esp32_arduino
+      from: "home"
+      to: "not_home"
+      for:
+        minutes: 5
+    - platform: state
+      entity_id:
+        - sensor.current
+        - sensor.energy_2
+        - sensor.power
+        - sensor.voltage
+      to: "unavailable"
+      for:
+        minutes: 5
+  action:
+    - service: notify.andrejs
+      data:
+        title: "Device offline!"
+        message: >
+          {{ trigger.to_state.name }} is offline for 5 minutes!

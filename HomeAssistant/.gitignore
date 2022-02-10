@@ -1,0 +1,6 @@
+.storage
+image
+tts
+*.db*
+*.log*
+secrets.yaml

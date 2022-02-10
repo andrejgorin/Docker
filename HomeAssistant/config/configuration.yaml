@@ -1,0 +1,44 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+sensor: !include sensors.yaml
+
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_token
+    allowed_chat_ids:
+      - !secret telegram_chat_id
+notify:
+  - platform: telegram
+    name: Andrejs
+    chat_id: !secret telegram_chat_id
+
+#homeassistant:
+#  customize_glob:
+#    sensor.energy*:
+#      unit_of_measurement: "kWh"
+#      device_class: energy
+#      state_class: total_increasing
+#      last_reset: "2022-02-01T00:00:00+00:00"
+
+utility_meter:
+  energy:
+    name: Energy (per Month)
+    source: sensor.energy_2
+    cycle: monthly
+
+group:
+  power_meter:
+    name: Power Meter
+    entities:
+      - sensor.current
+      - sensor.energy_2
+      - sensor.power
+      - sensor.voltage

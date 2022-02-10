@@ -6,5 +6,6 @@ mqtt:
   password:
 frontend:
   port: 8080
+homeassistant: true
 advanced:
   network_key: GENERATE
